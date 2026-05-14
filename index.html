@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>發票稅金計算器</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f3f6fb;
+      font-family: "Microsoft JhengHei", sans-serif;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 42px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #2563eb;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    button {
+      flex: 1;
+      border: none;
+      border-radius: 20px;
+      padding: 22px;
+      font-size: 32px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .inactive {
+      background: #d1d5db;
+      color: #374151;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 20px;
+      padding: 24px;
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .value {
+      color: #2563eb;
+    }
+
+    .uppercase {
+      font-size: 30px;
+      line-height: 1.8;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #6b7280;
+      font-size: 20px;
+    }
+
+    @media (max-width: 600px) {
+
+      .title {
+        font-size: 34px;
+      }
+
+      button {
+        font-size: 26px;
+      }
+
+      input {
+        font-size: 40px;
+      }
+
+      .row {
+        font-size: 28px;
+      }
+
+      .uppercase {
+        font-size: 24px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">
+    發票稅金計算器
+  </div>
+
+  <div class="buttons">
+
+    <button id="taxExclusiveBtn" class="active">
+      稅外加
+    </button>
+
+    <button id="taxInclusiveBtn" class="inactive">
+      內含稅
+    </button>
+
+  </div>
+
+  <input
+    type="number"
+    id="amountInput"
+    placeholder="請輸入金額"
+  >
+
+  <div class="card">
+
+    <div class="row">
+      <div>銷售額：</div>
+      <div class="value" id="sales">0</div>
+    </div>
+
+    <div class="row">
+      <div>稅　額：</div>
+      <div class="value" id="tax">0</div>
+    </div>
+
+    <div class="row">
+      <div>總　計：</div>
+      <div class="value" id="total">0</div>
+    </div>
+
+  </div>
+
+  <div class="card uppercase" id="uppercase">
+    X 億 X 仟 X 佰 X 拾 X 萬 X 仟 X 佰 X 拾 X 元整
+  </div>
+
+  <div class="footer">
+    台灣 5% 營業稅計算工具
+  </div>
+
+</div>
+
+<script>
+
+  let taxIncluded = false;
+
+  const amountInput = document.getElementById('amountInput');
+  const salesEl = document.getElementById('sales');
+  const taxEl = document.getElementById('tax');
+  const totalEl = document.getElementById('total');
+  const uppercaseEl = document.getElementById('uppercase');
+
+  const taxExclusiveBtn = document.getElementById('taxExclusiveBtn');
+  const taxInclusiveBtn = document.getElementById('taxInclusiveBtn');
+
+  taxExclusiveBtn.addEventListener('click', () => {
+
+    taxIncluded = false;
+
+    taxExclusiveBtn.classList.add('active');
+    taxExclusiveBtn.classList.remove('inactive');
+
+    taxInclusiveBtn.classList.add('inactive');
+    taxInclusiveBtn.classList.remove('active');
+
+    calculate();
+
+  });
+
+  taxInclusiveBtn.addEventListener('click', () => {
+
+    taxIncluded = true;
+
+    taxInclusiveBtn.classList.add('active');
+    taxInclusiveBtn.classList.remove('inactive');
+
+    taxExclusiveBtn.classList.add('inactive');
+    taxExclusiveBtn.classList.remove('active');
+
+    calculate();
+
+  });
+
+  amountInput.addEventListener('input', calculate);
+
+  function formatNumber(num) {
+    return Number(num).toLocaleString('zh-TW');
+  }
+
+  function calculate() {
+
+    const value = parseInt(amountInput.value || 0);
+
+    let sales = 0;
+    let tax = 0;
+    let total = 0;
+
+    if (!taxIncluded) {
+
+      sales = value;
+      tax = Math.round(sales * 0.05);
+      total = sales + tax;
+
+    } else {
+
+      total = value;
+      sales = Math.floor(total / 1.05);
+      tax = total - sales;
+
+    }
+
+    salesEl.innerText = formatNumber(sales);
+    taxEl.innerText = formatNumber(tax);
+    totalEl.innerText = formatNumber(total);
+
+    uppercaseEl.innerText = convertChineseUpper(total);
+
+  }
+
+  function convertChineseUpper(num) {
+
+    const nums = ['零','壹','貳','參','肆','伍','陸','柒','捌','玖'];
+
+    const digits = num.toString().padStart(9, 'X').split('');
+
+    const units = [
+      '億',
+      '仟',
+      '佰',
+      '拾',
+      '萬',
+      '仟',
+      '佰',
+      '拾',
+      '元'
+    ];
+
+    let result = '';
+
+    for (let i = 0; i < digits.length; i++) {
+
+      const char = digits[i];
+
+      if (char === 'X') {
+        result += 'X ' + units[i] + ' ';
+      }
+      else if (char === '0') {
+        result += '零 ' + units[i] + ' ';
+      }
+      else {
+        result += nums[parseInt(char)] + ' ' + units[i] + ' ';
+      }
+
+    }
+
+    return result + '整';
+
+  }
+
+</script>
+
+</body>
+</html>
