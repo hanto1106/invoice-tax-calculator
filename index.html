@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+    calculate();
+  });
+
+  amountInput.addEventListener('input', calculate);
+
+  function formatNumber(num) {
+    return Number(num).toLocaleString('zh-TW');
+  }
+
+  function calculate() {
+
+    const value = parseInt(amountInput.value || 0);
+
+    let sales = 0;
+    let tax = 0;
+    let total = 0;
+
+    if (!taxIncluded) {
+      sales = value;
+      tax = Math.round(sales * 0.05);
+      total = sales + tax;
+    } else {
+      total = value;
+      sales = Math.floor(total / 1.05);
+      tax = total - sales;
+    }
+
+    salesEl.innerText = formatNumber(sales);
+    taxEl.innerText = formatNumber(tax);
+    totalEl.innerText = formatNumber(total);
+
+    uppercaseEl.innerText = convertChineseUpper(total);
+  }
+
+  function convertChineseUpper(num) {
+
+    const nums = ['零','壹','貳','參','肆','伍','陸','柒','捌','玖'];
+
+    const digits = num.toString().padStart(9, 'X').split('');
+
+    const units = [
+      '億',
+      '仟',
+      '佰',
+      '拾',
+      '萬',
+      '仟',
+      '佰',
+      '拾',
+      '元'
+    ];
+
+    let result = '';
+
+    for (let i = 0; i < digits.length; i++) {
+
+      const char = digits[i];
+
+      if (char === 'X') {
+        result += 'X ' + units[i] + ' ';
+      }
+      else if (char === '0') {
+        result += '零 ' + units[i] + ' ';
+      }
+      else {
+        result += nums[parseInt(char)] + ' ' + units[i] + ' ';
+      }
+    }
+
+    return result + '整';
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+
+</script>
+
+</body>
+</html>
