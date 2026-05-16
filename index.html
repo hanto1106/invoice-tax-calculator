@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>發票稅金計算器</title>
 
@@ -43,6 +44,7 @@
       font-size: 32px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
     }
 
     .active {
@@ -64,6 +66,7 @@
       font-size: 48px;
       font-weight: bold;
       margin-bottom: 30px;
+      outline: none;
     }
 
     .card {
@@ -71,7 +74,7 @@
       border-radius: 24px;
       padding: 25px;
       margin-bottom: 25px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .row {
@@ -91,9 +94,10 @@
       line-height: 1.8;
       font-weight: bold;
       word-break: break-all;
-      .num {
-  color: #2563eb;
-      }
+    }
+
+    .uppercase .num {
+      color: #2563eb;
     }
 
     .footer {
@@ -104,7 +108,6 @@
     }
 
     @media (max-width: 600px) {
-
       .title {
         font-size: 34px;
       }
@@ -124,204 +127,204 @@
       .uppercase {
         font-size: 24px;
       }
-
     }
-
   </style>
-
 </head>
 
 <body>
 
-<div class="container">
+  <div class="container">
 
-  <div class="title">
-    發票稅金計算器
-  </div>
-
-  <div class="buttons">
-
-    <button id="taxExclusiveBtn" class="active">
-      稅外加
-    </button>
-
-    <button id="taxInclusiveBtn" class="inactive">
-      內含稅
-    </button>
-
-  </div>
-
-  <input
-    type="number"
-    id="amountInput"
-    placeholder="請輸入金額"
-  >
-
-  <div class="card">
-
-    <div class="row">
-      <div>銷售額：</div>
-      <div class="value" id="sales">0</div>
+    <div class="title">
+      發票稅金計算器
     </div>
 
-    <div class="row">
-      <div>稅　額：</div>
-      <div class="value" id="tax">0</div>
+    <div class="buttons">
+
+      <button id="taxExclusiveBtn" class="active">
+        稅外加
+      </button>
+
+      <button id="taxInclusiveBtn" class="inactive">
+        內含稅
+      </button>
+
     </div>
 
-    <div class="row">
-      <div>總　計：</div>
-      <div class="value" id="total">0</div>
+    <input
+      type="number"
+      id="amountInput"
+      placeholder="請輸入金額"
+    />
+
+    <div class="card">
+
+      <div class="row">
+        <div>銷售額：</div>
+        <div class="value" id="sales">0</div>
+      </div>
+
+      <div class="row">
+        <div>稅　額：</div>
+        <div class="value" id="tax">0</div>
+      </div>
+
+      <div class="row">
+        <div>總　計：</div>
+        <div class="value" id="total">0</div>
+      </div>
+
+    </div>
+
+    <div class="card uppercase" id="uppercase">
+      零元整
+    </div>
+
+    <div class="footer">
+      台灣 5% 營業稅計算工具
     </div>
 
   </div>
 
-  <div class="card uppercase" id="uppercase">
-    X 億 X 仟 X 佰 X 拾 X 萬 X 仟 X 佰 X 拾 X 元整
-  </div>
+  <script>
 
-  <div class="footer">
-    台灣 5% 營業稅計算工具
-  </div>
+    let taxIncluded = false;
 
-</div>
+    const amountInput = document.getElementById('amountInput');
+    const salesEl = document.getElementById('sales');
+    const taxEl = document.getElementById('tax');
+    const totalEl = document.getElementById('total');
+    const uppercaseEl = document.getElementById('uppercase');
 
-<script>
+    const taxExclusiveBtn = document.getElementById('taxExclusiveBtn');
+    const taxInclusiveBtn = document.getElementById('taxInclusiveBtn');
 
-  let taxIncluded = false;
+    taxExclusiveBtn.addEventListener('click', () => {
 
-  const amountInput = document.getElementById('amountInput');
-  const salesEl = document.getElementById('sales');
-  const taxEl = document.getElementById('tax');
-  const totalEl = document.getElementById('total');
-  const uppercaseEl = document.getElementById('uppercase');
+      taxIncluded = false;
 
-  const taxExclusiveBtn = document.getElementById('taxExclusiveBtn');
-  const taxInclusiveBtn = document.getElementById('taxInclusiveBtn');
+      taxExclusiveBtn.classList.add('active');
+      taxExclusiveBtn.classList.remove('inactive');
 
-  taxExclusiveBtn.addEventListener('click', () => {
+      taxInclusiveBtn.classList.add('inactive');
+      taxInclusiveBtn.classList.remove('active');
 
-    taxIncluded = false;
+      calculate();
 
-    taxExclusiveBtn.classList.add('active');
-    taxExclusiveBtn.classList.remove('inactive');
+    });
 
-    taxInclusiveBtn.classList.add('inactive');
-    taxInclusiveBtn.classList.remove('active');
+    taxInclusiveBtn.addEventListener('click', () => {
 
-    calculate();
+      taxIncluded = true;
 
-  });
+      taxInclusiveBtn.classList.add('active');
+      taxInclusiveBtn.classList.remove('inactive');
 
-  taxInclusiveBtn.addEventListener('click', () => {
+      taxExclusiveBtn.classList.add('inactive');
+      taxExclusiveBtn.classList.remove('active');
 
-    taxIncluded = true;
+      calculate();
 
-    taxInclusiveBtn.classList.add('active');
-    taxInclusiveBtn.classList.remove('inactive');
+    });
 
-    taxExclusiveBtn.classList.add('inactive');
-    taxExclusiveBtn.classList.remove('active');
+    amountInput.addEventListener('input', calculate);
 
-    calculate();
+    function formatNumber(num) {
+      return Number(num).toLocaleString('zh-TW');
+    }
 
-  });
+    function calculate() {
 
-  amountInput.addEventListener('input', calculate);
+      const value = parseInt(amountInput.value || 0);
 
-  function formatNumber(num) {
-    return Number(num).toLocaleString('zh-TW');
-  }
+      let sales = 0;
+      let tax = 0;
+      let total = 0;
 
-  function calculate() {
+      if (!taxIncluded) {
 
-    const value = parseInt(amountInput.value || 0);
+        sales = value;
+        tax = Math.round(sales * 0.05);
+        total = sales + tax;
 
-    let sales = 0;
-    let tax = 0;
-    let total = 0;
+      } else {
 
-    if (!taxIncluded) {
+        total = value;
+        sales = Math.floor(total / 1.05);
+        tax = total - sales;
 
-      sales = value;
-      tax = Math.round(sales * 0.05);
-      total = sales + tax;
+      }
 
-    } else {
+      salesEl.innerText = formatNumber(sales);
+      taxEl.innerText = formatNumber(tax);
+      totalEl.innerText = formatNumber(total);
 
-      total = value;
-      sales = Math.floor(total / 1.05);
-      tax = total - sales;
+      if (total > 999999999) {
+
+        uppercaseEl.innerHTML = '金額過大';
+        uppercaseEl.style.color = 'red';
+
+      } else {
+
+        uppercaseEl.innerHTML = convertChineseUpper(total);
+        uppercaseEl.style.color = '#111827';
+
+      }
 
     }
 
-    salesEl.innerText = formatNumber(sales);
-    taxEl.innerText = formatNumber(tax);
-    totalEl.innerText = formatNumber(total);
+    function convertChineseUpper(num) {
 
-    if (total > 999999999) {
+      const nums = ['零', '壹', '貳', '參', '肆', '伍', '陸', '柒', '捌', '玖'];
 
-  uppercaseEl.innerText = '金額過大';
-  uppercaseEl.style.color = 'red';
+      const units = [
+        '億',
+        '仟',
+        '佰',
+        '拾',
+        '萬',
+        '仟',
+        '佰',
+        '拾',
+        '元'
+      ];
 
-} else {
+      const digits = num.toString().padStart(9, '0').split('');
 
-  uppercaseEl.innerText = convertChineseUpper(total);
-  uppercaseEl.style.color = '#111827';
+      let firstNonZero = digits.findIndex(d => d !== '0');
 
-}
+      if (firstNonZero === -1) {
+        return '<span class="num">零</span>元整';
+      }
 
-  }
+      let result = '';
 
- function convertChineseUpper(num) {
+      for (let i = firstNonZero; i < digits.length; i++) {
 
-  const nums = ['零','壹','貳','參','肆','伍','陸','柒','捌','玖'];
+        const digit = digits[i];
 
-  const digits = num.toString().padStart(9, '0').split('');
+        const chineseNum =
+          digit === '0'
+            ? '零'
+            : nums[parseInt(digit)];
 
-  const units = [
-    '億',
-    '仟',
-    '佰',
-    '拾',
-    '萬',
-    '仟',
-    '佰',
-    '拾',
-    '元'
-  ];
+        result +=
+          '<span class="num">' +
+          chineseNum +
+          '</span>' +
+          units[i];
 
-  let firstNonZero = digits.findIndex(d => d !== '0');
+      }
 
-  if (firstNonZero === -1) {
-    return '<span class="num">零</span> 元整';
-  }
+      return result + '整';
 
-  let result = '';
+    }
 
-  for (let i = firstNonZero; i < digits.length; i++) {
+    calculate();
 
-    const digit = digits[i];
-
-    const chineseNum =
-      digit === '0'
-      ? '零'
-      : nums[parseInt(digit)];
-
-    result +=
-      '<span class="num">' +
-      chineseNum +
-      '</span> ' +
-      units[i] +
-      ' ';
-
-  }
-
-  return result + '整';
-
-}
-
-</script>
+  </script>
 
 </body>
+
 </html>
+```
