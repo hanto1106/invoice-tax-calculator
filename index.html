@@ -291,7 +291,7 @@
   let firstNonZero = digits.findIndex(d => d !== '0');
 
   if (firstNonZero === -1) {
-    return '零 元整';
+    return '<span class="num">零</span> 元整';
   }
 
   let result = '';
@@ -300,15 +300,17 @@
 
     const digit = digits[i];
 
-    if (digit === '0') {
+    const chineseNum =
+      digit === '0'
+      ? '零'
+      : nums[parseInt(digit)];
 
-      result += '零 ' + units[i] + ' ';
-
-    } else {
-
-      result += nums[parseInt(digit)] + ' ' + units[i] + ' ';
-
-    }
+    result +=
+      '<span class="num">' +
+      chineseNum +
+      '</span> ' +
+      units[i] +
+      ' ';
 
   }
 
