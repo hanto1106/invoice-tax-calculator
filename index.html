@@ -260,7 +260,7 @@
 
   }
 
-  function convertChineseUpper(num) {
+ function convertChineseUpper(num) {
 
   const nums = ['零','壹','貳','參','肆','伍','陸','柒','捌','玖'];
 
@@ -281,26 +281,22 @@
   let firstNonZero = digits.findIndex(d => d !== '0');
 
   if (firstNonZero === -1) {
-    firstNonZero = digits.length - 1;
+    return '零 元整';
   }
 
   let result = '';
 
-  for (let i = 0; i < digits.length; i++) {
+  for (let i = firstNonZero; i < digits.length; i++) {
 
     const digit = digits[i];
 
-    if (i < firstNonZero) {
+    if (digit === '0') {
 
-      result += 'X ' + units[i] + ' ';
+      result += '零 ' + units[i] + ' ';
 
     } else {
 
-      if (digit === '0') {
-        result += '零 ' + units[i] + ' ';
-      } else {
-        result += nums[parseInt(digit)] + ' ' + units[i] + ' ';
-      }
+      result += nums[parseInt(digit)] + ' ' + units[i] + ' ';
 
     }
 
