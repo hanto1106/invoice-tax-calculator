@@ -256,7 +256,17 @@
     taxEl.innerText = formatNumber(tax);
     totalEl.innerText = formatNumber(total);
 
-    uppercaseEl.innerText = convertChineseUpper(total);
+    if (total > 999999999) {
+
+  uppercaseEl.innerText = '金額過大';
+  uppercaseEl.style.color = 'red';
+
+} else {
+
+  uppercaseEl.innerText = convertChineseUpper(total);
+  uppercaseEl.style.color = '#111827';
+
+}
 
   }
 
